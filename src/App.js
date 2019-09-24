@@ -52,7 +52,13 @@ const Routines = () => (
   <Flex p="2rem" width={sidebarWidth} flexDirection="column">
     <h2>Routines</h2>
     {routines.map((routine, index) => (
-      <Button key={"routine" + index} bg="darkgray" color="white" mb="1rem">
+      <Button
+        key={"routine" + index}
+        p="2rem"
+        bg="darkgray"
+        color="white"
+        mb="1rem"
+      >
         {routine.label}
       </Button>
     ))}
@@ -62,7 +68,7 @@ const Routines = () => (
 const Nav = () => (
   <Flex bg="lightgray" p="2rem">
     {menu.map((item, index) => (
-      <Button key={"nav" + index} mr="1rem" color="black">
+      <Button key={"nav" + index} mr="1rem" p="2rem" color="black">
         <Link to={item.location}>{item.label}</Link>
       </Button>
     ))}
@@ -104,7 +110,7 @@ const Room = ({ match }) => {
     <Flex css={{ transform, transition }}>
       <Flex flexDirection="column" p="2rem" width={sidebarWidth + "px"}>
         {rooms.map((room, index) => (
-          <Button bg="darkgray" mb="1rem" key={"room" + index}>
+          <Button bg="darkgray" mb="1rem" p="2rem" key={"room" + index}>
             <Link onClick={() => onRoomClick(room)} to={"/room/" + room.name}>
               {room.label}
             </Link>
