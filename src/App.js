@@ -1,6 +1,7 @@
 import React, { useState, createContext, useContext } from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import { Box, Flex, Button, Text } from "rebass";
+import Slider from "@material-ui/core/Slider";
 
 const sidebarWidth = 300;
 
@@ -67,10 +68,22 @@ const Nav = () => (
   </Flex>
 );
 
-const Widget = ({ label }) => (
-  <Box height="100%" width="20rem" mr="2rem" css={{ border: "1px solid gray" }}>
-    {label}
-  </Box>
+const Widget = ({ label, type }) => (
+  <Flex
+    flexDirection="column"
+    height="30rem"
+    width="10rem"
+    mr="2rem"
+    p="2rem"
+    css={{ border: "1px solid lightgray", borderRadius: "10px" }}
+  >
+    <Text textAlign="center" pb="2rem">
+      {label}
+    </Text>
+    <Box flex="1" textAlign="center">
+      {type === "slider" && <Slider orientation="vertical" defaultValue={30} />}
+    </Box>
+  </Flex>
 );
 
 const Room = ({ match }) => {
@@ -106,23 +119,44 @@ const Room = ({ match }) => {
         <h2>{currentRoom.label}</h2>
 
         <Flex height="100%">
-          <Widget label="Lights" />
-          <Widget label="Blinds" />
-          <Widget label="Music" />
+          <Widget label="lights" type="slider" />
+          <Widget label="blinds" type="slider" />
+          <Widget label="music" type="slider" />
         </Flex>
       </Box>
     </Flex>
   );
 };
+
+const widgets = [
+  {
+    name: "lights",
+    label: "Lights",
+    type: "slider",
+    floorplan: [{ x: 10, y: 10 }]
+  },
+  { name: "blinds", label: "Window Shades", type: "slider" }
+];
+
 const Floorplan = ({ match }) => {
-  console.log("->", match);
+  const useWidget = widgets.filter(
+    widget => widget.name === match.params.widget
+  )[0];
+
   return (
     <Flex p="2rem">
       <Box flex="1">
         <h2>Floorplan</h2>
+
+        <Box
+          bg="lightgray"
+          width="30rem"
+          height="30rem"
+          css={{ position: "relative" }}
+        ></Box>
       </Box>
       <Box>
-        <Widget label={match.params.widget} />
+        <Widget label={useWidget.label} type={useWidget.type} />
       </Box>
     </Flex>
   );
