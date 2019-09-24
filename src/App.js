@@ -2,6 +2,7 @@ import React, { useState, createContext, useContext } from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import { Box, Flex, Button, Text } from "rebass";
 import Slider from "@material-ui/core/Slider";
+import { FaLightbulb, FaWindowMaximize } from "react-icons/fa";
 
 const sidebarWidth = 300;
 
@@ -132,8 +133,7 @@ const widgets = [
   {
     name: "lights",
     label: "Lights",
-    type: "slider",
-    floorplan: [{ x: 10, y: 10 }]
+    type: "slider"
   },
   { name: "blinds", label: "Window Shades", type: "slider" }
 ];
@@ -143,17 +143,42 @@ const Floorplan = ({ match }) => {
     widget => widget.name === match.params.widget
   )[0];
 
+  const numCords = 4;
+
+  const getRandomArbitrary = (min, max) => Math.random() * (max - min) + min;
+
+  const cords = [];
+  for (let i = 0; i < numCords; i++) {
+    cords.push({
+      top: getRandomArbitrary(0, 400),
+      left: getRandomArbitrary(0, 400)
+    });
+  }
+
   return (
     <Flex p="2rem">
       <Box flex="1">
-        <h2>Floorplan</h2>
+        <h2>{useWidget.label}</h2>
 
         <Box
           bg="lightgray"
           width="30rem"
           height="30rem"
           css={{ position: "relative" }}
-        ></Box>
+        >
+          {cords.map(cord => (
+            <Box
+              css={{
+                position: "absolute",
+                top: `${cord.top}px`,
+                left: `${cord.left}px`
+              }}
+            >
+              {useWidget.name === "lights" && <FaLightbulb />}
+              {useWidget.name === "blinds" && <FaWindowMaximize />}
+            </Box>
+          ))}
+        </Box>
       </Box>
       <Box>
         <Widget label={useWidget.label} type={useWidget.type} />
