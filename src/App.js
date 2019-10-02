@@ -1,4 +1,10 @@
-import React, { useState, createContext, useContext } from "react";
+import React, {
+  useState,
+  createContext,
+  useContext,
+  useRef,
+  useEffect
+} from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import { Box, Flex, Button, Text } from "rebass";
 import Slider from "@material-ui/core/Slider";
@@ -7,6 +13,7 @@ import { FaLightbulb, FaWindowMaximize } from "react-icons/fa";
 const sidebarWidth = 300;
 
 const menu = [
+  { label: "Test", location: "/test" },
   { label: "Room", location: "/room" },
   { label: "Routines", location: "/routines" },
   { label: "Lighting", location: "/floorplan/lights" },
@@ -78,8 +85,8 @@ const Nav = () => (
 const Widget = ({ label, type }) => (
   <Flex
     flexDirection="column"
-    height="30rem"
-    width="10rem"
+    height="20rem"
+    width="8rem"
     mr="2rem"
     p="2rem"
     css={{ border: "1px solid lightgray", borderRadius: "10px" }}
@@ -108,9 +115,14 @@ const Room = ({ match }) => {
 
   return (
     <Flex css={{ transform, transition }}>
-      <Flex flexDirection="column" p="2rem" width={sidebarWidth + "px"}>
+      <Flex
+        flexDirection="column"
+        p="2rem"
+        width={sidebarWidth + "px"}
+        bg="#efefef"
+      >
         {rooms.map((room, index) => (
-          <Button bg="darkgray" mb="1rem" p="2rem" key={"room" + index}>
+          <Button bg="darkgray" mb="1rem" p="0.5rem" key={"room" + index}>
             <Link onClick={() => onRoomClick(room)} to={"/room/" + room.name}>
               {room.label}
             </Link>
@@ -125,7 +137,7 @@ const Room = ({ match }) => {
 
         <h2>{currentRoom.label}</h2>
 
-        <Flex height="100%">
+        <Flex>
           <Widget label="lights" type="slider" />
           <Widget label="blinds" type="slider" />
           <Widget label="music" type="slider" />
@@ -156,7 +168,7 @@ const Floorplan = ({ match }) => {
   const cords = [];
   for (let i = 0; i < numCords; i++) {
     cords.push({
-      top: getRandomArbitrary(0, 400),
+      top: getRandomArbitrary(0, 200),
       left: getRandomArbitrary(0, 400)
     });
   }
@@ -167,9 +179,9 @@ const Floorplan = ({ match }) => {
         <h2>{useWidget.label}</h2>
 
         <Box
-          bg="lightgray"
+          bg="#efefef"
           width="30rem"
-          height="30rem"
+          height="20rem"
           css={{ position: "relative" }}
         >
           {cords.map(cord => (
@@ -202,12 +214,61 @@ const Container = ({ children }) => {
   );
 };
 
+const Test = () => {
+  const CrLib = window.CrComLib;
+  const logEl = useRef(null);
+
+  const publishN = e => {
+    CrLib.publishEvent("n", "24", 65535);
+    logEl.current.value += "Publish n, 24, 65535\n";
+  };
+
+  useEffect(() => {
+    CrLib.subscribeState("n", "24", value => {
+      logEl.current.value += "Received state n, 24, " + value + "\n";
+    });
+
+    CrLib.subscribeState("s", "25", value => {
+      logEl.current.value += "Received state s, 25, " + value + "\n";
+    });
+  }, [CrLib]);
+
+  return (
+    <Box p="2rem">
+      <Box mb="2rem">
+        CH-5 web component button
+        <br />
+        <ch5-button sendEventOnClick="22" label="Send event 22" />
+      </Box>
+
+      <Box>
+        React button
+        <br />
+        <Button
+          onClick={publishN}
+          p="2rem"
+          bg="darkgray"
+          color="white"
+          mb="1rem"
+        >
+          Publish event n, 24, 65535
+        </Button>
+      </Box>
+
+      <Box>
+        <textarea ref={logEl} cols="40" rows="10"></textarea>
+      </Box>
+    </Box>
+  );
+};
+
 const App = () => {
   return (
     <Container>
       <Flex flexDirection="column" height="100%">
         <Router>
           <Box flex="1">
+            <Route path="/test" component={Test} />
             <Route path="/room/:name?" component={Room} />
             <Route path="/routines" component={Routines} />
             <Route path="/floorplan/:widget" component={Floorplan} />
