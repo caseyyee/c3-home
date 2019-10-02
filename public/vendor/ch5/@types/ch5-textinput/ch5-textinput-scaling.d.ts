@@ -1,0 +1,38 @@
+export declare type TCh5TextInputUserBehavior = 'none' | 'fill' | 'erase';
+export declare class Ch5TextInputScaling {
+    static USERBEHAVIORS: TCh5TextInputUserBehavior[];
+    static CHANGEFACTOR: number;
+    private _fontSize;
+    private _minimumFontSize;
+    private _maximumFontSize;
+    private _currentFontSize;
+    private _edge;
+    private _lastValueLength;
+    private _valueLengthOnHitTheEdge;
+    private _valueLength;
+    private _input;
+    private _inputPlaceholder;
+    constructor(input: HTMLInputElement);
+    scaleUp(): void;
+    restoreTheInput(): void;
+    fontSize: number;
+    minimumFontSize: number;
+    maximumFontSize: number;
+    valueLength: number;
+    edge: boolean;
+    currentFontSize: number;
+    updateDefaultFontSize(): void;
+    detectUserBehavior(): TCh5TextInputUserBehavior;
+    protected attachEventListener(): void;
+    private _addInputPlaceholder();
+    private _createInputPlaceholder();
+    private _fillInputPlaceholder();
+    private _makeInputPlaceholderFeelLikeInput();
+    private _makeInputPlaceholderUnreachable();
+    private _isTextWidthGreaterThanInputWidth();
+    private _flagTheLengthWhichExactlyFits();
+    private _resetFontSizeWhenExactlyFits();
+    private _scaleFontSize(action?);
+    private _validateFontSizeValue(fontSize, edge?);
+    private _setFontSizeToInput(fontSize);
+}
