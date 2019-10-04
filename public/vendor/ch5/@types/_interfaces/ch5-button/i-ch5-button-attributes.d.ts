@@ -10,7 +10,6 @@ export interface ICh5ButtonAttributes extends ICh5CommonAttributes {
     shape: TCh5ButtonShape;
     stretch: TCh5ButtonStretch;
     type: TCh5ButtonType;
-    selected: boolean;
     receiveStateSelected: string;
     receiveStateLabel: string;
     receiveStateScriptLabelHtml: string;

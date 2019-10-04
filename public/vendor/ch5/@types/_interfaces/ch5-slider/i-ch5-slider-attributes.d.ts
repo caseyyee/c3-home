@@ -4,7 +4,6 @@ import { TCh5CommonInputFeedbackModes } from "../ch5-common-input/types";
 export interface ICh5SliderAttributes extends ICh5CommonAttributes {
     handleShape: TCh5SliderShape;
     value: number | string;
-    range: boolean | string;
     valueHigh: number | string;
     max: number | string;
     min: number | string;
@@ -14,7 +13,6 @@ export interface ICh5SliderAttributes extends ICh5CommonAttributes {
     step: number | string;
     stretch: TCh5SliderStretch;
     ticks: string;
-    showTickValues: boolean | string;
     toolTipShowType: TCh5SliderTooltipType;
     toolTipDisplayType: TCh5SliderTooltipDisplay;
     signalValueSyncTimeout: string | number;
@@ -23,5 +21,4 @@ export interface ICh5SliderAttributes extends ICh5CommonAttributes {
     receiveStateValueHigh: string;
     sendEventOnChange: string;
     sendEventOnChangeHigh: string;
-    noHandle: boolean | string;
 }

@@ -9,7 +9,6 @@ export interface ICh5ToggleAttributes extends ICh5CommonInputAttributes {
     iconOff: string;
     handleShape: TCh5ToggleShape;
     orientation: TCh5ToggleOrientation;
-    value: string | boolean;
     signalValueSyncTimeout: string | number;
     feedbackMode: TCh5CommonInputFeedbackModes;
     receiveStateScriptLabelHtml: string;

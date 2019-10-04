@@ -9,8 +9,10 @@ export declare class Ch5ImportHtmlSnippet extends Ch5Common implements ICh5Impor
     private errorEvent;
     private sigNameSendOnLoad;
     private loadEvent;
+    private _sendEventOnShowSigName;
     constructor();
     url: string;
+    sendEventOnShow: string;
     static readonly observedAttributes: string[];
     attributeChangedCallback(attr: string, oldValue: string, newValue: any): void;
     unsubscribeFromSignals(): void;
@@ -20,6 +22,7 @@ export declare class Ch5ImportHtmlSnippet extends Ch5Common implements ICh5Impor
     private onLoadAction(finalValue);
     private loadHTMLContent(url);
     private loadJSON(url, callback);
+    private _sendSignalValueOnShow();
     private _onError(inEvent);
     private _sendValueForErrorSignal(errorMessage);
     protected initAttributes(): void;

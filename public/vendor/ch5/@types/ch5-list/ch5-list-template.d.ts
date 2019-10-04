@@ -23,7 +23,7 @@ export declare class Ch5ListTemplate extends Ch5ListAbstractHelper {
     attachCSS(): void;
     updateListMainElStyle(): void;
     addUniqueClass(newClass: string): boolean;
-    resizeList(element: HTMLElement, templateVars: string | null, sizeReceivedFromSig?: number): void;
+    resizeList(element: HTMLElement, templateVars: string | null): void;
     triggerResizeDueWidthAndHeightUpdates(): void;
     removeScrollbar(): void;
     customScrollbar(additionalElement: HTMLElement): void;

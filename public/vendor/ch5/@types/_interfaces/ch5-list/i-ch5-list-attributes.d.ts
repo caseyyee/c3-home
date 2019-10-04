@@ -10,9 +10,6 @@ export interface ICh5ListAttributes extends ICh5CommonAttributes {
     maxWidth: string | null;
     minHeight: string | null;
     maxHeight: string | null;
-    pagedSwipe: boolean;
-    endless: boolean;
-    scrollbar: boolean | string | null;
     scrollToTime: number;
     indexId: string | null;
     receiveStateSize: string | null | undefined;

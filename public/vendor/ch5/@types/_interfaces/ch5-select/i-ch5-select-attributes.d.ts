@@ -3,7 +3,6 @@ import { TCh5SelectIconPosition, TCh5SelectMode } from "./types";
 import { TCh5CommonInputFeedbackModes } from "../ch5-common-input/types";
 export interface ICh5SelectAttributes extends ICh5CommonAttributes {
     size: string | number;
-    multiselect: boolean;
     iconPosition: TCh5SelectIconPosition;
     selectedValue: string | number;
     panelScrollHeight: number;
@@ -11,7 +10,6 @@ export interface ICh5SelectAttributes extends ICh5CommonAttributes {
     maxWidth: string | null;
     minHeight: string | null;
     maxHeight: string | null;
-    resize: boolean;
     mode: TCh5SelectMode;
     feedbackMode: TCh5CommonInputFeedbackModes;
     signalValueSyncTimeout: string | number;

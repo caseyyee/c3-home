@@ -8,8 +8,6 @@ export interface ICh5SpinnerAttributes extends ICh5CommonAttributes {
     selectedValue: number;
     itemHeight: string;
     visibleItemScroll: number;
-    resize: boolean;
-    endless: boolean;
     feedbackMode: TCh5CommonInputFeedbackModes;
     signalValueSyncTimeout: number;
     indexId: string;

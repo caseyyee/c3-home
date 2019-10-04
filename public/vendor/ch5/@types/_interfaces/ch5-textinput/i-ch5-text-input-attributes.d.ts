@@ -13,7 +13,6 @@ export interface ICh5TextInputAttributes extends ICh5CommonInputAttributes {
     maxValue: number;
     size: TCh5TextInputSize;
     stretch: TCh5TextInputStretch;
-    scaling: boolean;
     textTransform: TCh5TextInputTextTransform;
     receiveStateFocus: string;
     receiveStateValue: string;
