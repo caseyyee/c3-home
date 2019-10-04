@@ -2,6 +2,7 @@
   "name": "c3-home",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
   "dependencies": {
     "@babel/runtime": "^7.6.0",
     "@crestron/ch5-crcomlib": "^0.1.0",
@@ -20,7 +21,7 @@
     "copy:manifest": "cp -R ./appui ./build/appui",
     "build:archive": "ch5-cli archive -p c3-home -d ./build -o ./archive",
     "build:deploy": "ch5-cli deploy -H 192.168.16.221 -t touchscreen archive/c3-home.ch5z",
-    "build:all": "npm run copy:manifest && npm run build:archive && npm run build:deploy",
+    "build:all": "npm run copy:manifest && npm run build && npm run build:archive && npm run build:deploy",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

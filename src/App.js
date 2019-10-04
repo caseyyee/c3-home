@@ -13,11 +13,11 @@ import { FaLightbulb, FaWindowMaximize } from "react-icons/fa";
 const sidebarWidth = 300;
 
 const menu = [
-  { label: "Test", location: "/test" },
-  { label: "Room", location: "/room" },
-  { label: "Routines", location: "/routines" },
-  { label: "Lighting", location: "/floorplan/lights" },
-  { label: "Blinds", location: "/floorplan/blinds" }
+  { label: "Test", location: "./test" },
+  { label: "Room", location: "./room" },
+  { label: "Routines", location: "./routines" },
+  { label: "Lighting", location: "./floorplan/lights" },
+  { label: "Blinds", location: "./floorplan/blinds" }
 ];
 
 const rooms = [
@@ -218,9 +218,9 @@ const Test = () => {
   const CrLib = window.CrComLib;
   const logEl = useRef(null);
 
-  const publishN = e => {
-    CrLib.publishEvent("n", "24", 65535);
-    logEl.current.value += "Publish n, 24, 65535\n";
+  const publishN = ({ type, id, value }) => {
+    CrLib.publishEvent(type, id, value);
+    logEl.current.value += `Publish ${type}, ${id}, ${value}\n`;
   };
 
   useEffect(() => {
@@ -228,8 +228,12 @@ const Test = () => {
       logEl.current.value += "Received state n, 24, " + value + "\n";
     });
 
-    CrLib.subscribeState("s", "25", value => {
-      logEl.current.value += "Received state s, 25, " + value + "\n";
+    CrLib.subscribeState("b", "25", value => {
+      logEl.current.value += "Received state b, 25, " + value + "\n";
+    });
+
+    CrLib.subscribeState("s", "26", value => {
+      logEl.current.value += "Received state s, 26, " + value + "\n";
     });
   }, [CrLib]);
 
@@ -245,13 +249,39 @@ const Test = () => {
         React button
         <br />
         <Button
-          onClick={publishN}
+          onClick={() => {
+            publishN({ type: "n", id: "24", value: 1337 });
+          }}
+          p="2rem"
+          bg="darkgray"
+          color="white"
+          mb="1rem"
+          mr="1rem"
+        >
+          publish n, 24, 1337
+        </Button>
+        <Button
+          onClick={() => {
+            publishN({ type: "b", id: "25", value: true });
+          }}
+          p="2rem"
+          bg="darkgray"
+          color="white"
+          mb="1rem"
+          mr="1rem"
+        >
+          publish b, 25, true
+        </Button>
+        <Button
+          onClick={() => {
+            publishN({ type: "s", id: "26", value: "Test String" });
+          }}
           p="2rem"
           bg="darkgray"
           color="white"
           mb="1rem"
         >
-          Publish event n, 24, 65535
+          publish s, 26, "Test String"
         </Button>
       </Box>
 
@@ -266,13 +296,14 @@ const App = () => {
   return (
     <Container>
       <Flex flexDirection="column" height="100%">
+        <Test />
         <Router>
-          <Box flex="1">
+          {/* <Box flex="1">
             <Route path="/test" component={Test} />
             <Route path="/room/:name?" component={Room} />
             <Route path="/routines" component={Routines} />
             <Route path="/floorplan/:widget" component={Floorplan} />
-          </Box>
+          </Box> */}
           <Nav />
         </Router>
       </Flex>
