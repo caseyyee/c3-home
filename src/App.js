@@ -5,7 +5,7 @@ import React, {
   useRef,
   useEffect
 } from "react";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { MemoryRouter as Router, Route, Link } from "react-router-dom";
 import { Box, Flex, Button, Text } from "rebass";
 import Slider from "@material-ui/core/Slider";
 import { FaLightbulb, FaWindowMaximize } from "react-icons/fa";
@@ -13,11 +13,11 @@ import { FaLightbulb, FaWindowMaximize } from "react-icons/fa";
 const sidebarWidth = 300;
 
 const menu = [
-  { label: "Test", location: "./test" },
-  { label: "Room", location: "./room" },
-  { label: "Routines", location: "./routines" },
-  { label: "Lighting", location: "./floorplan/lights" },
-  { label: "Blinds", location: "./floorplan/blinds" }
+  { label: "Test", location: "/test" },
+  { label: "Room", location: "/room" },
+  { label: "Routines", location: "/routines" },
+  { label: "Lighting", location: "/floorplan/lights" },
+  { label: "Blinds", location: "/floorplan/blinds" }
 ];
 
 const rooms = [
@@ -157,14 +157,13 @@ const widgets = [
 ];
 
 const Floorplan = ({ match }) => {
-  const useWidget = widgets.filter(
-    widget => widget.name === match.params.widget
-  )[0];
+  const useWidget = widgets
+    .filter(widget => widget.name === match.params.widget)
+    .shift();
 
+  // arbitrary floorplan
   const numCords = 4;
-
   const getRandomArbitrary = (min, max) => Math.random() * (max - min) + min;
-
   const cords = [];
   for (let i = 0; i < numCords; i++) {
     cords.push({
@@ -186,7 +185,8 @@ const Floorplan = ({ match }) => {
         >
           {cords.map(cord => (
             <Box
-              css={{
+              key={`cords-${cord.top}-${cord.left}`}
+              sx={{
                 position: "absolute",
                 top: `${cord.top}px`,
                 left: `${cord.left}px`
@@ -296,14 +296,13 @@ const App = () => {
   return (
     <Container>
       <Flex flexDirection="column" height="100%">
-        <Test />
         <Router>
-          {/* <Box flex="1">
+          <Box flex="1">
             <Route path="/test" component={Test} />
             <Route path="/room/:name?" component={Room} />
             <Route path="/routines" component={Routines} />
             <Route path="/floorplan/:widget" component={Floorplan} />
-          </Box> */}
+          </Box>
           <Nav />
         </Router>
       </Flex>
