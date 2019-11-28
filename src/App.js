@@ -224,6 +224,8 @@ const Test = () => {
   };
 
   useEffect(() => {
+    console.log("subscribing to state", CrLib);
+
     CrLib.subscribeState("n", "24", value => {
       logEl.current.value += "Received state n, 24, " + value + "\n";
     });
@@ -243,6 +245,37 @@ const Test = () => {
         CH-5 web component button
         <br />
         <ch5-button sendEventOnClick="22" label="Send event 22" />
+      </Box>
+
+      <Box mb="2rem">
+        CH-5 web component slider
+        <Box my="2">
+          b27: off
+          <br />
+          s28: change
+          <br />
+          s28: receive change state
+          <br />
+          b29: on
+          <br />
+        </Box>
+        <Flex>
+          <ch5-button shape="circle" sendEventOnClick="27">
+            Off
+          </ch5-button>
+          <ch5-slider
+            class="lighting-slider"
+            stretch="width"
+            handleShape="circle"
+            toolTipShowType="auto"
+            sendEventOnChange="28"
+            receiveStateValue="28"
+            orientation="horizontal"
+          ></ch5-slider>
+          <ch5-button shape="circle" sendEventOnClick="29">
+            On
+          </ch5-button>
+        </Flex>
       </Box>
 
       <Box>
