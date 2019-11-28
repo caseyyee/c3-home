@@ -6,6 +6,7 @@
   "dependencies": {
     "@babel/runtime": "^7.6.0",
     "@crestron/ch5-crcomlib": "^0.1.1",
+    "@crestron/ch5-utilities-cli": "0.0.6",
     "@material-ui/core": "^4.4.3",
     "babel-preset-react-app": "^9.0.2",
     "react": "^16.9.0",
@@ -19,8 +20,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "copy:manifest": "cp -R ./appui ./build/appui",
-    "build:archive": "ch5-cli archive -p c3-home -d ./build -o ./archive",
-    "build:deploy": "ch5-cli deploy -H 192.168.16.221 -t touchscreen archive/c3-home.ch5z",
+    "build:archive": "npx ch5-cli archive -p c3-home -d ./build -o ./archive",
+    "build:deploy": "npx ch5-cli deploy -H 192.168.16.221 -t touchscreen archive/c3-home.ch5z",
     "build:all": "npm run copy:manifest && npm run build && npm run build:archive && npm run build:deploy",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
