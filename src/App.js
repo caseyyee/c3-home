@@ -9,51 +9,11 @@ import { MemoryRouter as Router, Route, Link } from "react-router-dom";
 import { Box, Flex, Button, Text } from "rebass";
 import Slider from "@material-ui/core/Slider";
 import { FaLightbulb, FaWindowMaximize } from "react-icons/fa";
+import { menu, rooms, routines } from "./data";
 
 const sidebarWidth = 300;
 
-const menu = [
-  { label: "Test", location: "/test" },
-  { label: "Room", location: "/room" },
-  { label: "Routines", location: "/routines" },
-  { label: "Lighting", location: "/floorplan/lights" },
-  { label: "Blinds", location: "/floorplan/blinds" }
-];
-
-const rooms = [
-  {
-    label: "Master Bedroom",
-    name: "master",
-    widgets: ["Lights", "Blinds", "HVAC"]
-  },
-  {
-    label: "Childrens Bedroom",
-    name: "children",
-    widgets: ["Lights", "Blinds", "HVAC"]
-  },
-  {
-    label: "Guest Bedroom",
-    name: "guest",
-    widgets: ["Lights", "Blinds", "HVAC"]
-  },
-  {
-    label: "Kitchen",
-    name: "kitchen",
-    widgets: ["Lights", "Blinds", "HVAC"]
-  },
-  {
-    label: "Library",
-    name: "library",
-    widgets: ["Lights", "Blinds", "HVAC"]
-  },
-  {
-    label: "Pool",
-    name: "pool",
-    widgets: ["Lights", "Blinds", "HVAC"]
-  }
-];
-
-const routines = [{ label: "Away" }, { label: "Bedtime" }];
+const CrLib = window.CrComLib;
 
 const Routines = () => (
   <Flex p="2rem" width={sidebarWidth} flexDirection="column">
@@ -214,18 +174,167 @@ const Container = ({ children }) => {
   );
 };
 
-const Test = () => {
-  const CrLib = window.CrComLib;
+const LightingTest = () => {
   const logEl = useRef(null);
 
+  const publishN = ({ type, id, value }) => {
+    console.log("publishing", { type, id, value });
+    CrLib.publishEvent(type, id, value);
+  };
+
+  useEffect(() => {
+    CrLib.subscribeState("s", "35", value => {
+      logEl.current.value += value + "\n";
+    });
+  }, []);
+
+  return (
+    <Box p="4">
+      <Flex>
+        <Box>
+          <p>
+            Off - n22
+            <br />
+            On - n21
+            <br />
+            Slider on change - n24
+            <br />
+            Slider receive state - n23
+          </p>
+        </Box>
+        <Box>
+          <Flex>
+            <Box>
+              <ch5-button shape="circle" sendEventOnClick="22">
+                Off
+              </ch5-button>
+            </Box>
+            <Box width="15rem">
+              <ch5-slider
+                class="lighting-slider"
+                stretch="width"
+                handleShape="circle"
+                toolTipShowType="auto"
+                sendEventOnChange="24"
+                receiveStateValue="23"
+                orientation="horizontal"
+              />
+            </Box>
+            <Box>
+              <ch5-button shape="circle" sendEventOnClick="21">
+                On
+              </ch5-button>
+            </Box>
+          </Flex>
+        </Box>
+      </Flex>
+
+      <hr />
+
+      <p>
+        Ramp up - n31, sends true on button down, false on button up.
+        <br />
+        Ramp down - n32, sends true on button down, false on button up.
+      </p>
+
+      <Flex>
+        <Button
+          onMouseDown={() => publishN({ type: "b", id: "31", value: true })}
+          onMouseUp={() => publishN({ type: "b", id: "31", value: false })}
+          onTouchStart={() => publishN({ type: "b", id: "31", value: true })}
+          onTouchEnd={() => publishN({ type: "b", id: "31", value: false })}
+          p="2rem"
+          bg="darkgray"
+          color="white"
+          mb="1rem"
+          mr="1rem"
+        >
+          Ramp lights up
+        </Button>
+        <Button
+          onMouseDown={() => publishN({ type: "b", id: "32", value: true })}
+          onMouseUp={() => publishN({ type: "b", id: "32", value: false })}
+          onTouchStart={() => publishN({ type: "b", id: "32", value: true })}
+          onTouchEnd={() => publishN({ type: "b", id: "32", value: false })}
+          p="2rem"
+          bg="darkgray"
+          color="white"
+          mb="1rem"
+          mr="1rem"
+        >
+          Ramp lights down
+        </Button>
+      </Flex>
+
+      <hr />
+
+      <Flex>
+        <Box>
+          <p>Receives state value - n25</p>
+        </Box>
+
+        <Box width="15rem">
+          <ch5-slider
+            class="lighting-slider"
+            stretch="width"
+            handleShape="circle"
+            toolTipShowType="auto"
+            receiveStateValue="25"
+            orientation="horizontal"
+          ></ch5-slider>
+        </Box>
+      </Flex>
+
+      <hr />
+
+      <p>Send strings</p>
+
+      <Flex>
+        <Button
+          onClick={() => {
+            publishN({ type: "s", id: "25", value: "lights_on" });
+          }}
+          p="2rem"
+          bg="darkgray"
+          color="white"
+          mb="1rem"
+          mr="1rem"
+        >
+          s25 - lights_on
+        </Button>
+        <Button
+          onClick={() => {
+            publishN({ type: "s", id: "25", value: "lights_off" });
+          }}
+          p="2rem"
+          bg="darkgray"
+          color="white"
+          mb="1rem"
+          mr="1rem"
+        >
+          s25 - lights_off
+        </Button>
+      </Flex>
+
+      <hr />
+
+      <p>Receive s35</p>
+
+      <p>
+        <textarea ref={logEl} cols="40" rows="10"></textarea>
+      </p>
+    </Box>
+  );
+};
+
+const Test = () => {
+  const logEl = useRef(null);
   const publishN = ({ type, id, value }) => {
     CrLib.publishEvent(type, id, value);
     logEl.current.value += `Publish ${type}, ${id}, ${value}\n`;
   };
 
   useEffect(() => {
-    console.log("subscribing to state", CrLib);
-
     CrLib.subscribeState("n", "24", value => {
       logEl.current.value += "Received state n, 24, " + value + "\n";
     });
@@ -237,7 +346,7 @@ const Test = () => {
     CrLib.subscribeState("s", "26", value => {
       logEl.current.value += "Received state s, 26, " + value + "\n";
     });
-  }, [CrLib]);
+  }, []);
 
   return (
     <Box p="2rem">
@@ -332,6 +441,7 @@ const App = () => {
         <Router>
           <Box flex="1">
             <Route path="/test" component={Test} />
+            <Route path="/test2" component={LightingTest} />
             <Route path="/room/:name?" component={Room} />
             <Route path="/routines" component={Routines} />
             <Route path="/floorplan/:widget" component={Floorplan} />
