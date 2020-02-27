@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { MemoryRouter as Router, Route, Link } from "react-router-dom";
 import { Box, Flex, Button, Text } from "rebass";
+import styled from "styled-components";
 import Slider from "@material-ui/core/Slider";
 import { FaLightbulb, FaWindowMaximize } from "react-icons/fa";
 import { menu, rooms, routines } from "./data";
@@ -171,6 +172,82 @@ const Container = ({ children }) => {
   const [room, setRoom] = useState(undefined);
   return (
     <Context.Provider value={{ room, setRoom }}>{children}</Context.Provider>
+  );
+};
+
+const ButtonStyled = styled(Button)`
+  :active {
+    background: yellow;
+  }
+`;
+
+const StateButton = ({ sendEvent, receiveState, children, ...props }) => {
+  const eventType = "b";
+  const [isOn, setState] = useState(true);
+  const button = useRef(null);
+
+  const publishN = (type, id, value) => {
+    console.log("publishing", { type, id, value });
+    CrLib.publishEvent(type, id, value);
+  };
+
+  useEffect(() => {
+    console.log("listening for", eventType, receiveState);
+    CrLib.subscribeState(eventType, receiveState, value => {
+      setState(value);
+    });
+  }, [receiveState, eventType]);
+
+  return (
+    <ButtonStyled
+      p="2rem"
+      bg={isOn ? "orange" : "darkgray"}
+      color="white"
+      mb="1rem"
+      mr="1rem"
+      ref={button}
+      onClick={() => publishN(eventType, sendEvent, !isOn)}
+      {...props}
+    >
+      {children}
+    </ButtonStyled>
+  );
+};
+
+const StressTest = () => {
+  let slider = [];
+  const sliders = () => {
+    for (let i = 31; i < 41; i++) {
+      slider.push(
+        <Flex key={`slider-${i}`} flexDirection="column">
+          <Box>{i}</Box>
+          <Box>
+            <ch5-slider
+              class="lighting-slider"
+              stretch="width"
+              handleShape="circle"
+              toolTipShowType="auto"
+              sendEventOnChange={i}
+              receiveStateValue={i}
+              orientation="horizontal"
+              style={{ padding: 0 }}
+            />
+          </Box>
+        </Flex>
+      );
+    }
+    return slider;
+  };
+  return (
+    <Box p="4">
+      <p>Stress test page</p>
+
+      <StateButton sendEvent={20} receiveState={20}>
+        b20 Boolean state Button
+      </StateButton>
+
+      {sliders()}
+    </Box>
   );
 };
 
@@ -442,6 +519,7 @@ const App = () => {
           <Box flex="1">
             <Route path="/test" component={Test} />
             <Route path="/test2" component={LightingTest} />
+            <Route path="/test3" component={StressTest} />
             <Route path="/room/:name?" component={Room} />
             <Route path="/routines" component={Routines} />
             <Route path="/floorplan/:widget" component={Floorplan} />

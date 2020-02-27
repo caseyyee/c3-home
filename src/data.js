@@ -1,6 +1,7 @@
 const menu = [
   { label: "Test", location: "/test" },
   { label: "Test 2", location: "/test2" },
+  { label: "Test 3", location: "/test3" },
   { label: "Room", location: "/room" },
   { label: "Routines", location: "/routines" },
   { label: "Lighting", location: "/floorplan/lights" },
