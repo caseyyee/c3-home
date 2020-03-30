@@ -1,13 +1,3 @@
-const menu = [
-  { label: "Test", location: "/test" },
-  { label: "Test 2", location: "/test2" },
-  { label: "Test 3", location: "/test3" },
-  { label: "Room", location: "/room" },
-  { label: "Routines", location: "/routines" },
-  { label: "Lighting", location: "/floorplan/lights" },
-  { label: "Blinds", location: "/floorplan/blinds" }
-];
-
 const rooms = [
   {
     label: "Master Bedroom",
@@ -43,4 +33,4 @@ const rooms = [
 
 const routines = [{ label: "Away" }, { label: "Bedtime" }];
 
-export { menu, rooms, routines };
+export { rooms, routines };
