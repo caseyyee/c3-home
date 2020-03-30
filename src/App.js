@@ -183,7 +183,7 @@ const ButtonStyled = styled(Button)`
 
 const StateButton = ({ sendEvent, receiveState, children, ...props }) => {
   const eventType = "b";
-  const [isOn, setState] = useState(true);
+  const [isOn, setState] = useState(false);
   const button = useRef(null);
 
   const publishN = (type, id, value) => {
@@ -206,7 +206,10 @@ const StateButton = ({ sendEvent, receiveState, children, ...props }) => {
       mb="1rem"
       mr="1rem"
       ref={button}
-      onClick={() => publishN(eventType, sendEvent, !isOn)}
+      onMouseDown={() => publishN(eventType, sendEvent, true)}
+      onMouseUp={() => publishN(eventType, sendEvent, false)}
+      onTouchStart={() => publishN(eventType, sendEvent, true)}
+      onTouchEnd={() => publishN(eventType, sendEvent, false)}
       {...props}
     >
       {children}
