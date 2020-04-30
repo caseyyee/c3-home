@@ -19,103 +19,23 @@ const CrLib = window.CrComLib;
 
 const sources = ["Source 1", "Source 2", "Source 3"];
 
-const initialState = [
-  {
-    id: 0,
-    label: "Room 1",
-    source: 0,
-    checked: false,
-    visible: true,
-    selectable: true,
-    value: parseInt(Math.random() * 100),
-    volumeUp: 1,
-    volumeDown: 2,
-    volumeMute: 3,
-  },
-  {
-    id: 1,
-    label: "Room 2",
-    source: 1,
-    checked: false,
-    visible: true,
-    selectable: true,
-    value: parseInt(Math.random() * 100),
-    volumeUp: 4,
-    volumeDown: 5,
-    volumeMute: 6,
-  },
-  {
-    id: 2,
-    label: "Room 3",
-    source: 2,
-    checked: false,
-    visible: true,
-    selectable: true,
-    value: parseInt(Math.random() * 100),
-    volumeUp: 7,
-    volumeDown: 8,
-    volumeMute: 9,
-  },
-  {
-    id: 3,
-    label: "Room 4",
-    source: 0,
-    checked: false,
-    visible: true,
-    selectable: true,
-    value: parseInt(Math.random() * 100),
-    volumeUp: 10,
-    volumeDown: 11,
-    volumeMute: 12,
-  },
-  {
-    id: 4,
-    label: "Room 5",
-    source: 0,
-    checked: false,
-    visible: true,
-    selectable: false,
-    value: parseInt(Math.random() * 100),
-    volumeUp: 13,
-    volumeDown: 14,
-    volumeMute: 15,
-  },
-];
+const MuteButton = ({ muted, ...props }) => (
+  <Button variantColor={muted ? "red" : "gray"} {...props}>
+    {muted ? <MdVolumeOff /> : <MdVolumeUp />}
+  </Button>
+);
 
-const MuteButton = ({ sendEventOnClick, receiveStateValue }) => {
-  const [muted, setMuted] = useState(false);
-
-  useEffect(() => {
-    CrLib.subscribeState("b", receiveStateValue, (value) => {
-      setMuted(value);
-    });
-  }, [receiveStateValue]);
-
-  useEffect(() => {
-    CrLib.publishEvent("b", sendEventOnClick, muted);
-  }, [muted, sendEventOnClick]);
-
-  return (
-    <Button
-      onClick={() => setMuted(!muted)}
-      variantColor={muted ? "red" : "gray"}
-    >
-      {muted ? <MdVolumeOff /> : <MdVolumeUp />}
-    </Button>
-  );
-};
-
-const SliderGroup = ({ sendEventOnChange, receiveStateValue }) => {
+const SliderGroup = () => {
   const [value, setValue] = useState(30);
 
-  useEffect(() => {
-    CrLib.subscribeState("n", receiveStateValue, (value) => setValue(value));
-  }, [receiveStateValue]);
+  // useEffect(() => {
+  //   CrLib.subscribeState("n", receiveStateValue, (value) => setValue(value));
+  // }, [receiveStateValue]);
 
-  useEffect(() => {
-    console.log("publishing", sendEventOnChange, value);
-    CrLib.publishEvent("n", sendEventOnChange, value);
-  }, [value, sendEventOnChange]);
+  // useEffect(() => {
+  //   console.log("publishing", sendEventOnChange, value);
+  //   CrLib.publishEvent("n", sendEventOnChange, value);
+  // }, [value, sendEventOnChange]);
 
   return (
     <Flex>
@@ -141,136 +61,97 @@ const SliderGroup = ({ sendEventOnChange, receiveStateValue }) => {
 };
 
 const config = {
-  range: 20,
+  range: 5,
   roomName: {
     first: 41,
-    last: 60,
     type: "s",
   },
   sourceName: {
     first: 141,
-    last: 160,
     type: "s",
   },
   roomVisible: {
     first: 201,
-    last: 220,
     type: "b",
   },
   roomSelectable: {
     first: 231,
-    last: 250,
     type: "b",
   },
   roomVolMute: {
     first: 261,
-    last: 280,
     type: "b",
   },
   roomVolDown: {
     first: 281,
-    last: 300,
     type: "b",
   },
   roomVolUp: {
     first: 301,
-    last: 320,
     type: "b",
   },
   roomVolAbs: {
     first: 101,
-    last: 120,
     type: "n",
   },
 };
 
 export default () => {
-  const [rooms, setRooms] = useState(initialState);
+  const [rooms, setRooms] = useState({});
 
   const setRoomById = (id, values) => {
+    const diff = Object.keys(values).filter(
+      (key) => rooms[id] && rooms[id][key] !== values[key]
+    );
+
+    diff.map((key) => {
+      if (key === "volumeMute") {
+        // todo: send to crlib
+        console.log(
+          parseInt(id) + config.roomVolMute.first,
+          config.roomVolMute.type,
+          key,
+          values[key]
+        );
+      }
+    });
+
     setRooms((prevState) => {
-      prevState[id] = values;
-      return prevState;
+      prevState[id] = {
+        ...prevState[id],
+        ...values,
+      };
+      return { ...prevState };
     });
   };
 
   useEffect(() => {
-    // id: [crestron id]
-    // label: "Room 1",
-    // source: 0,
-    // checked: false,
-    // value: parseInt(Math.random() * 10),
-    // room names
-    // current sources
-    // room visibility
-    // room selectability
-    // room names
-    // for (let i = 0; i < config.range; i++) {
-    //   const index = i + config.roomName.start;
-    //   CrLib.subscribeState("s", index, (value) => {
-    //     setRoomById(index, {
-    //       label: value,
-    //     });
-    //   });
-    // }
-    // room source
-    // todo: current source name? need list of all possibilities.
-    // for (let i = 0; i < config.range; i++) {
-    //   const index = i + config.sourceName.start;
-    //   CrLib.subscribeState("s", index, (value) => {
-    //     setRoomById(index, {
-    //       source: value
-    //     })
-    //   });
-    // }
-    // room source visibility
-    // for (let i = 0; i < config.range; i++) {
-    //   const index = i + config.roomVisible.start;
-    //   CrLib.subscribeState("b", index, (value) => {
-    //     setRoomById(index, {
-    //       visible: value,
-    //     });
-    //   });
-    // }
-    // room selectability
-    // for (let i = 0; i < config.range; i++) {
-    //   const index = i + config.roomSelectable.start;
-    //   CrLib.subscribeState("b", index, (value) => {
-    //     setRoomById(index, {
-    //       selectable: value,
-    //     });
-    //   });
-    // }
-    // room volume
-    // for (let i = 0; i < config.range; i++) {
-    //   const index = i + config.roomVolAbs.start;
-    //   CrLib.subscribeState("n", index, (value) => {
-    //     const volumeUp = i + config.roomVolUp.start;
-    //     const volumeDown = i + config.roomVolDown.start;
-    //     const volumeMute = i + config.volumeMute.start;
-    //     const volumeAbs = i + config.volumeAbs.start;
-    //     setRoomById(index, {
-    //       value,
-    //       volumeUp,
-    //       volumeDown,
-    //       volumeMute,
-    //       volumeAbs,
-    //     });
-    //   });
-    // }
+    for (let i = 0; i < config.range; i++) {
+      // todo: this will be done by crlib subscribe
+      setRoomById(i, {
+        label: "Room " + i,
+        source: 0,
+        checked: false,
+        visible: true,
+        selectable: true,
+        volumeUp: i + config.roomVolUp.first,
+        volumeDown: i + config.roomVolDown.first,
+        volumeMute: false,
+      });
+    }
   }, []);
 
-  const checkChanged = (index) => {
+  const checkChanged = (key) => {
     setRooms((prevState) => {
-      prevState[index].checked = !prevState[index].checked;
-      return [...prevState];
+      prevState[key].checked = !prevState[key].checked;
+      return { ...prevState };
     });
   };
 
-  const onSourceChange = (index, selectedIndex) => {
+  const onSourceChange = (key, selectedIndex) => {
     setRooms((prevState) => {
-      prevState[index].source = selectedIndex;
-      return [...prevState];
+      prevState[key].source = selectedIndex;
+      return { ...prevState };
     });
   };
 
@@ -278,44 +159,42 @@ export default () => {
     const newSourceId = e.target.selectedIndex;
 
     setRooms((prevState) => {
-      const newState = prevState.map((room) => {
-        if (room.checked) {
-          room.source = newSourceId;
+      Object.keys(prevState).map((key) => {
+        if (prevState[key].checked) {
+          prevState[key].source = newSourceId;
         }
-        return { ...room };
       });
-      return [...newState];
+      return { ...prevState };
     });
   };
 
-  const checkedCount = rooms.filter((props) => props.checked).length;
+  const checkedCount = Object.keys(rooms).filter((key) => rooms[key].checked)
+    .length;
 
   return (
     <Box p="2rem">
       <Heading>Global Audio</Heading>
 
       <form>
-        {rooms.map((room, index) => (
+        {Object.keys(rooms).map((key) => (
           <Flex
-            key={`room-${index}`}
+            key={`room-${key}`}
             style={{ borderBottom: "1px solid lightgray" }}
             p="1rem"
           >
             <Checkbox
-              checked={rooms.checked}
-              onChange={() => checkChanged(index)}
+              checked={rooms[key].checked}
+              onChange={() => checkChanged(key)}
             />
             <Flex flexDirection="row">
               <Text width="10rem" p="10px" mx="2rem">
-                {room.label}
+                {rooms[key].label}
               </Text>
               <Box mx="2rem">
                 <Select
                   placeholder="Source"
-                  onChange={(e) =>
-                    onSourceChange(index, e.target.selectedIndex)
-                  }
-                  value={room.source - 1}
+                  onChange={(e) => onSourceChange(key, e.target.selectedIndex)}
+                  value={rooms[key].source - 1}
                 >
                   {sources.map((source, index) => {
                     return (
@@ -328,10 +207,15 @@ export default () => {
               </Box>
               <Flex>
                 <Box mx="2rem">
-                  <MuteButton sendEventOnClick={21} receiveStateValue={22} />
+                  <MuteButton
+                    muted={rooms[key].volumeMute}
+                    onClick={() =>
+                      setRoomById(key, { volumeMute: !rooms[key].volumeMute })
+                    }
+                  />
                 </Box>
                 <Box>
-                  <SliderGroup sendEventOnChange={21} receiveStateValue={22} />
+                  <SliderGroup />
                 </Box>
               </Flex>
             </Flex>
