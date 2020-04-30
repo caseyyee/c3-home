@@ -25,17 +25,14 @@ const MuteButton = ({ muted, ...props }) => (
   </Button>
 );
 
-const SliderGroup = () => {
-  const [value, setValue] = useState(30);
+const SliderGroup = ({ onChange, value: initialValue = 20 }) => {
+  const [value, setValue] = useState(initialValue);
 
-  // useEffect(() => {
-  //   CrLib.subscribeState("n", receiveStateValue, (value) => setValue(value));
-  // }, [receiveStateValue]);
-
-  // useEffect(() => {
-  //   console.log("publishing", sendEventOnChange, value);
-  //   CrLib.publishEvent("n", sendEventOnChange, value);
-  // }, [value, sendEventOnChange]);
+  useEffect(() => {
+    if (onChange) {
+      onChange(value);
+    }
+  }, [value]);
 
   return (
     <Flex>
@@ -65,6 +62,7 @@ const config = {
   roomName: {
     first: 41,
     type: "s",
+    subscribe: true,
   },
   sourceName: {
     first: 141,
@@ -81,6 +79,7 @@ const config = {
   roomVolMute: {
     first: 261,
     type: "b",
+    publish: true,
   },
   roomVolDown: {
     first: 281,
@@ -93,26 +92,28 @@ const config = {
   roomVolAbs: {
     first: 101,
     type: "n",
+    publish: true,
+    subscribe: true,
   },
 };
 
 export default () => {
   const [rooms, setRooms] = useState({});
 
-  const setRoomById = (id, values) => {
+  const setRoomById = (id, values, { setBySubscription = false } = {}) => {
     const diff = Object.keys(values).filter(
       (key) => rooms[id] && rooms[id][key] !== values[key]
     );
 
     diff.map((key) => {
-      if (key === "volumeMute") {
-        // todo: send to crlib
-        console.log(
-          parseInt(id) + config.roomVolMute.first,
-          config.roomVolMute.type,
-          key,
-          values[key]
-        );
+      const eventId = parseInt(id) + config[key].first;
+      const eventType = config[key].type;
+      const eventValue = values[key];
+      const shouldPublish = config[key].publish && !setBySubscription;
+
+      if (shouldPublish) {
+        console.log("publish", eventType, eventId, key, eventValue);
+        CrLib.publishEvent(eventType, eventId, eventValue);
       }
     });
 
@@ -127,16 +128,31 @@ export default () => {
 
   useEffect(() => {
     for (let i = 0; i < config.range; i++) {
-      // todo: this will be done by crlib subscribe
       setRoomById(i, {
         label: "Room " + i,
         source: 0,
         checked: false,
         visible: true,
         selectable: true,
-        volumeUp: i + config.roomVolUp.first,
-        volumeDown: i + config.roomVolDown.first,
-        volumeMute: false,
+        roomVolMute: false,
+        roomVolAbs: 50,
+      });
+
+      Object.keys(config).map((key) => {
+        const shouldSubscribe = config[key].subscribe;
+        if (shouldSubscribe) {
+          const eventType = config[key].type;
+          const eventId = config[key].first + i;
+
+          console.log("subscribe", eventType, eventId, {
+            [i]: { [key]: undefined },
+          });
+
+          CrLib.subscribeState(eventType, eventId, (value) => {
+            // console.log("scurbribe callback", i, { [key]: value })
+            setRoomById(i, { [key]: value }, { setBySubscription: true });
+          });
+        }
       });
     }
   }, []);
@@ -208,14 +224,19 @@ export default () => {
               <Flex>
                 <Box mx="2rem">
                   <MuteButton
-                    muted={rooms[key].volumeMute}
+                    muted={rooms[key].roomVolMute}
                     onClick={() =>
-                      setRoomById(key, { volumeMute: !rooms[key].volumeMute })
+                      setRoomById(key, { roomVolMute: !rooms[key].roomVolMute })
                     }
                   />
                 </Box>
                 <Box>
-                  <SliderGroup />
+                  <SliderGroup
+                    value={rooms[key].roomVolAbs}
+                    onChange={(value) => {
+                      setRoomById(key, { roomVolAbs: value });
+                    }}
+                  />
                 </Box>
               </Flex>
             </Flex>
