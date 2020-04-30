@@ -15,6 +15,8 @@ import {
 
 import { MdVolumeDown, MdVolumeOff, MdVolumeUp } from "react-icons/md";
 
+import config from "../config/audio";
+
 const CrLib = window.CrComLib;
 
 const sources = ["Source 1", "Source 2", "Source 3"];
@@ -57,46 +59,6 @@ const SliderGroup = ({ onChange, value: initialValue = 20 }) => {
   );
 };
 
-const config = {
-  range: 5,
-  roomName: {
-    first: 41,
-    type: "s",
-    subscribe: true,
-  },
-  sourceName: {
-    first: 141,
-    type: "s",
-  },
-  roomVisible: {
-    first: 201,
-    type: "b",
-  },
-  roomSelectable: {
-    first: 231,
-    type: "b",
-  },
-  roomVolMute: {
-    first: 261,
-    type: "b",
-    publish: true,
-  },
-  roomVolDown: {
-    first: 281,
-    type: "b",
-  },
-  roomVolUp: {
-    first: 301,
-    type: "b",
-  },
-  roomVolAbs: {
-    first: 101,
-    type: "n",
-    publish: true,
-    subscribe: true,
-  },
-};
-
 export default () => {
   const [rooms, setRooms] = useState({});
 
@@ -129,7 +91,7 @@ export default () => {
   useEffect(() => {
     for (let i = 0; i < config.range; i++) {
       setRoomById(i, {
-        label: "Room " + i,
+        roomName: "Room " + i,
         source: 0,
         checked: false,
         visible: true,
@@ -204,7 +166,7 @@ export default () => {
             />
             <Flex flexDirection="row">
               <Text width="10rem" p="10px" mx="2rem">
-                {rooms[key].label}
+                {rooms[key].roomName}
               </Text>
               <Box mx="2rem">
                 <Select
